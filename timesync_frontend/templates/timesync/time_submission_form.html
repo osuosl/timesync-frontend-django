@@ -1,18 +1,5 @@
-<form action="{% url 'submission' %}" method="post">
-    <h1>{{ "Duration" }}</h1>
-    <input type="text" name="duration" id="duration" />
-    <h1>{{ "User" }}</h1>
-    <input type="text" name="user" id="user" />
-    <h1>{{ "Project" }}</h1>
-    <input type="text" name="project" id="project" />
-    <h1>{{ "Activities" }}</h1>
-    <input type="text" name="activities" id="activities" />
-    <h1>{{ "Notes" }}</h1>
-    <input type="text" name="notes" id="notes" />
-    <h1>{{ "Issue URI" }}</h1>
-    <input type="uri" name="issue_uri" id="issue_uri" />
-    <h1>{{ "Date Worked" }}</h1>
-    <input type="date" name="date_worked" id="date_worked" />
-    <br />
+<form action="{% url 'time-submission' %}" method="post">
+    {% csrf_token %}
+    {{ form }}
     <input type="submit" value="Submit" />
 </form>
