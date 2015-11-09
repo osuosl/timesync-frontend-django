@@ -6,10 +6,14 @@ class TimeSubmissionForm(forms.Form):
     project = forms.CharField(label='Project')
     activities = forms.CharField(label='Activities')
     notes = forms.CharField(label='Notes')
-    issue_uri = forms.CharField(label='Issue URI')
-    date_worked = forms.CharField(label='Date Worked')
+    issue_uri = forms.URLField(label='Issue URI', 
+        help_text='E.g. http://www.github.com')
+    date_worked = forms.DateField(label='Date Worked',
+        help_text='Year-Month-Day')
 
+    """
     class Meta:
         fields = ['duration', 'user', 'project', 'activities', 'notes', 'issue_uri', 'date_worked']
 
-        exclude = ('podcast', 'size', 'length', 'part', 'mime_type')
+        #exclude = ('podcast', 'size', 'length', 'part', 'mime_type')
+    """
