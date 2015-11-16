@@ -7,30 +7,14 @@ class TimeSubmissionTestCase(TestCase):
         self.Client = Client()
 
     def test_url_endpoint(self):
-        url = reverse('submission')
-        self.assertEqual(url, '/timesync/submission')
+        url = reverse('time-submission')
+        self.assertEqual(url, '/timesync/time-submission')
 
-    """
     def test_form_fields(self):
-        response = self.client.get(reverse('submission'))
-        print response
+        response = self.client.get(reverse('time-submission'))
 
-        fields = {'duration': 'input', 'user': 'input', 'project': 'input',
-                  'activities': 'input', 'notes': 'textarea', 'issue_uri':
-                  'input', 'date_worked': 'input'}
-        form = response.context
-        print form
-        print response['notes']
-
-        for field in fields:
-            self.assertIn(fields[field], str(response[field]))
-    """
-
-    def test_form_fields_2(self):
-        response = self.client.get(reverse('submission'))
-
-        fields = ['duration', 'user', 'project', 'activities', 'notes',
-                  'issue_uri', 'date_worked']
+        fields = {'duration', 'user', 'project', 'activities', 'notes',
+                  'issue_uri', 'date_worked'}
         form = response.context
 
         self.assertEqual(response.status_code, 200)
@@ -44,7 +28,7 @@ class TimeSubmissionTestCase(TestCase):
                     'activities': 'docs', 'notes': '', 'issue_uri': '',
                     'date_worked': '2015-5-20'}
 
-        self.client.post(reverse('submission'), new_time)
+        self.client.post(reverse('time-submission'), new_time)
 
         time = new_time
 

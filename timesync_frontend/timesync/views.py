@@ -36,8 +36,11 @@ def time_submission(request):
             resp = ts.send_time(params)
             print resp.content
  
-            return HttpResponseRedirect('/timesync/submitted/', content=resp)
+            return HttpResponseRedirect('/timesync/submitted/', {'time':
+                resp.content}, content=resp)
     else:
+        #TODO
+        #get list of projects, pass to form
         form = TimeSubmissionForm()
 
     return render(request, 'timesync/time_submission_form.html', {'form': form})
