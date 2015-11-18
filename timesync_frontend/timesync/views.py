@@ -8,13 +8,15 @@ import json
 #import pymesync
 
 def time_submission(request):
+    ts = pymesync.TimeSync('http://140.211.168.211',
+                           password="password",
+                           user="example-user",
+                           auth_type="password")
+
     if request.method == 'POST':
         form = TimeSubmissionForm(request.POST)
         
         if form.is_valid():
-            #TODO
-            #Send to pymesync
-
             params = {
                 'duration': form.cleaned_data['duration'],
                 'user': form.cleaned_data['user'],
@@ -28,10 +30,6 @@ def time_submission(request):
             params['date_worked'] = params['date_worked'].strftime('%Y-%m-%d')
             #print params
  
-            ts = pymesync.TimeSync('http://140.211.168.211',
-                                   password="password",
-                                   user="example-user",
-                                   auth_type="password")
             resp = HttpResponse()
             resp = ts.send_time(params)
             print resp.content
