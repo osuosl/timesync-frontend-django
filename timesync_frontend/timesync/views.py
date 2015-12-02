@@ -24,9 +24,11 @@ def get_times(request):
                resp = ts.get_times(issue_uri=form.cleaned_data['issue_uri'])
             elif form.cleaned_data['issue_uri']:
                resp = ts.get_times(issue_uri=form.cleaned_data['issue_uri'])
-        print resp
+            print resp
 
-        return render(request, 'timesync/get_times.html', {'times': resp})
+            return render(request, 'timesync/get_times.html', {'times': resp})
+        else:
+            print form.is_valid()
     else:
         form = TimeSelectionForm()
 
