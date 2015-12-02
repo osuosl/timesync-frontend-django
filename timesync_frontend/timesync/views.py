@@ -58,7 +58,6 @@ def time_submission(request):
             #Return the response
             return render(request, 'timesync/time_submission_form.html',
                 {'form': form, 'time': resp})
-
     else:
         form = TimeSubmissionForm(project_names)
 
