@@ -8,7 +8,7 @@ import json
 #import pymesync
 
 def time_submission(request):
-    ts = pymesync.TimeSync('http://140.211.168.211',
+    ts = pymesync.TimeSync('http://140.211.168.211/v1',
                            password="password",
                            user="example-user",
                            auth_type="password")
@@ -39,7 +39,14 @@ def time_submission(request):
     else:
         #TODO
         #get list of projects, pass to form
-        form = TimeSubmissionForm()
+
+        projects = ts.get_projects()
+        project_names = []
+
+        for project in projects:
+            project_names.append((project['name'], project['name']))
+
+        form = TimeSubmissionForm(project_names)
 
     return render(request, 'timesync/time_submission_form.html', {'form': form})
 
