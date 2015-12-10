@@ -4,7 +4,7 @@ from timesync.pymesync import pymesync
 from timesync.forms import TimeSelectionForm
 
 def get_times(request):
-    ts = pymesync.TimeSync('http://140.211.168.211/v1/',
+    ts = pymesync.TimeSync('http://140.211.168.211/v1',
                            password="password",
                            user="example-user",
                            auth_type="password")
@@ -30,8 +30,12 @@ def get_times(request):
         else:
             print form.is_valid()
     else:
-        #TODO
-        #Get projects, submit to form
-        form = TimeSelectionForm()
+        projects = ts.get_projects()
+        project_names = []
+
+        for project in projects:
+            project_names.append((project['name'], project['name']))
+
+        form = TimeSelectionForm(project_names)
 
     return render(request, 'timesync/select_times.html', {'form': form})
