@@ -21,7 +21,12 @@ class LoginForm(forms.Form):
     password = forms.CharField(label='Password', widget=forms.PasswordInput())
 
 class TimeSelectionForm(forms.Form):
-    project = forms.CharField(label='Project', required=False)
+    def __init__(self, projects, *args, **kwargs):
+        super(TimeSelectionForm, self).__init__(*args, **kwargs)
+        print projects
+        self.fields['project'] = forms.ChoiceField(choices=projects)
+
+    #project = forms.CharField(label='Project', required=False)
     user = forms.CharField(label='User', required=False)
     activities = forms.CharField(label='Activities', required=False)
     issue_uri = forms.URLField(label='Issue URI', required=False)
