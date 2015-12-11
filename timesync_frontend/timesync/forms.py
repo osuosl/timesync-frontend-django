@@ -15,10 +15,3 @@ class TimeSubmissionForm(forms.Form):
         help_text='E.g. http://www.github.com')
     date_worked = forms.DateField(label='Date Worked',
         help_text='Year-Month-Day')
-
-    """
-    class Meta:
-        fields = ['duration', 'user', 'project', 'activities', 'notes', 'issue_uri', 'date_worked']
-
-        #exclude = ('podcast', 'size', 'length', 'part', 'mime_type')
-    """
