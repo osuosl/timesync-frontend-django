@@ -11,6 +11,7 @@ def get_times(request):
 
     if request.method == 'POST':
         form = TimeSelectionForm(request.POST)
+        print form
         if form.is_valid():
             if form.cleaned_data['project']:
                 resp = ts.get_times(project=form.cleaned_data['project'])
