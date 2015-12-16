@@ -5,16 +5,22 @@ from timesync.forms import TimeSubmissionForm
 from timesync.pymesync import pymesync
 
 import json
-#import pymesync
 
 def time_submission(request):
     ts = pymesync.TimeSync('http://140.211.168.211/v1',
-                           password="password",
-                           user="example-user",
+                           password="test",
+                           user="test",
                            auth_type="password")
 
+    #Get list of projects
+    projects = ts.get_projects()
+    project_names = []
+
+    for project in projects:
+        project_names.append((project['name'], project['name']))
+
     if request.method == 'POST':
-        form = TimeSubmissionForm(request.POST)
+        form = TimeSubmissionForm(projects=project_names, data=request.POST)
         
         if form.is_valid():
             params = {
@@ -28,27 +34,20 @@ def time_submission(request):
             }
             #Make date json serializable
             params['date_worked'] = params['date_worked'].strftime('%Y-%m-%d')
-            #print params
  
             resp = HttpResponse()
             resp = ts.send_time(params)
-            print resp.content
  
-            return HttpResponseRedirect('/timesync/submitted/', {'time':
-                resp.content}, content=resp)
+            #TODO
+            #Format resp somehow
+
+            return render(request, 'timesync/time_submission_form.html',
+                    {'form': form, 'time': resp})
     else:
-        #TODO
-        #get list of projects, pass to form
-
-        projects = ts.get_projects()
-        project_names = []
-
-        for project in projects:
-            project_names.append((project['name'], project['name']))
-
         form = TimeSubmissionForm(project_names)
 
-    return render(request, 'timesync/time_submission_form.html', {'form': form})
+    return render(request, 'timesync/time_submission_form.html', {'form': form,
+            'time': ''})
 
 def submitted(request):
-    return render(request, 'timesync/submitted.html')
+    return render(request, 'timesync/submitted.html', {'time': time})
