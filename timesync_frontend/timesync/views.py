@@ -7,10 +7,8 @@ from timesync.pymesync import pymesync
 import json
 
 def time_submission(request):
-    ts = pymesync.TimeSync('http://140.211.168.211/v1',
-                           password="test",
-                           user="test",
-                           auth_type="password")
+    ts = pymesync.TimeSync('http://timesync-staging.osuosl.org/v1')
+    resp = ts.authenticate("test", "test", "password")
 
     #Get list of projects
     projects = ts.get_projects()
@@ -32,14 +30,22 @@ def time_submission(request):
                 'issue_uri': form.cleaned_data['issue_uri'],
                 'date_worked': form.cleaned_data['date_worked'],
             }
+
+            #Have to submit a slug
+            for project in projects:
+                if project['name'] == params['project']:
+                    params['project'] = project['slugs'][0]
+
             #Make date json serializable
             params['date_worked'] = params['date_worked'].strftime('%Y-%m-%d')
  
             resp = HttpResponse()
-            resp = ts.send_time(params)
+            resp = ts.create_time(params)
  
             #TODO
             #Format resp somehow
+            resp = resp[0]
+            resp = json.dumps(resp)
 
             return render(request, 'timesync/time_submission_form.html',
                     {'form': form, 'time': resp})
