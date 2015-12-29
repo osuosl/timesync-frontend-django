@@ -4,4 +4,46 @@
     <input type="submit" value="Submit" />
 </form>
 
-{{ time }}
+{% if has_error %}
+    <p>
+    Status:
+    {{ status }}
+    </p>
+    <p>
+    Error:
+    {{ error }}
+    </p>
+    <p>
+    Text:
+    {{ text }}
+    </p>
+{% else %}
+    <p>
+    Duration:
+    {{ duration }}
+    </p>
+    <p>
+    Project:
+    {{ project }}
+    </p>
+    <p>
+    User:
+    {{ user }}
+    </p>
+    <p>
+    Activities:
+    {{ activities }}
+    </p>
+    <p>
+    notes:
+    {{ notes }}
+    </p>
+    <p>
+    Issue URI:
+    {{ issue_uri }}
+    </p>
+    <p>
+    Date Worked:
+    {{ date_worked }}
+    </p>
+{% endif %}

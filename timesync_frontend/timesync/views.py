@@ -44,8 +44,22 @@ def time_submission(request):
  
             #TODO
             #Format resp somehow
-            resp = resp[0]
-            resp = json.dumps(resp)
+
+            if 'error' in resp[0]:
+                return render(request, 'timesync/time_submission_form.html',
+                        {'form': form, 'has_error': True, 'status': 
+                        resp[0]['status'], 'error': resp[0]['error'], 'text': 
+                        resp[0]['text']})
+            else:
+                return render(request, 'timesync/time_submission_form.html',
+                        {'form': form, 'has_error': False, 'duration': 
+                        resp[0]['duration'], 'project': resp[0]['project'],
+                        'user': resp[0]['user'], 'activities':
+                        resp[0]['activities'], 'notes': resp[0]['notes'],
+                        'issue_uri': resp[0]['issue_uri'], 'date_worked':
+                        resp[0]['date_worked']})
+
+
 
             return render(request, 'timesync/time_submission_form.html',
                     {'form': form, 'time': resp})
