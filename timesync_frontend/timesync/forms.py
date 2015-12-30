@@ -9,7 +9,8 @@ class TimeSubmissionForm(forms.Form):
     duration = forms.IntegerField(label='Duration')
     user = forms.CharField(label='User')
     project = forms.ChoiceField(label='Project')
-    activities = forms.CharField(label='Activities')
+    activities = forms.CharField(label='Activities', 
+        help_text='Comma separated')
     notes = forms.CharField(label='Notes')
     issue_uri = forms.URLField(label='Issue URI', 
         help_text='E.g. http://www.github.com')

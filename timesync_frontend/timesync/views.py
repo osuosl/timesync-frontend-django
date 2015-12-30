@@ -25,11 +25,12 @@ def time_submission(request):
                 'duration': form.cleaned_data['duration'],
                 'user': form.cleaned_data['user'],
                 'project': form.cleaned_data['project'],
-                'activities': [form.cleaned_data['activities']],
+                'activities': form.cleaned_data['activities'],
                 'notes': form.cleaned_data['notes'],
                 'issue_uri': form.cleaned_data['issue_uri'],
                 'date_worked': form.cleaned_data['date_worked'],
             }
+
 
             #Have to submit a slug
             for project in projects:
@@ -39,12 +40,15 @@ def time_submission(request):
             #Make date json serializable
             params['date_worked'] = params['date_worked'].strftime('%Y-%m-%d')
  
+            #Deal with multiple activities
+            params['activities'] = params['activities'].split(',')
+            params['activities'] = [activity.strip() for activity in
+                params['activities']]
+            
             resp = HttpResponse()
             resp = ts.create_time(params)
  
-            #TODO
-            #Format resp somehow
-
+            #Return the response so that it can be printed nicely
             if 'error' in resp[0]:
                 return render(request, 'timesync/time_submission_form.html',
                         {'form': form, 'has_error': True, 'status': 

@@ -23,19 +23,21 @@
     {{ duration }}
     </p>
     <p>
-    Project:
-    {{ project }}
-    </p>
-    <p>
     User:
     {{ user }}
     </p>
     <p>
-    Activities:
-    {{ activities }}
+    Project:
+    {{ project }}
     </p>
     <p>
-    notes:
+    Activities:
+    {% for activity in activities %}
+        {{ activity }}
+    {% endfor %}
+    </p>
+    <p>
+    Notes:
     {{ notes }}
     </p>
     <p>
