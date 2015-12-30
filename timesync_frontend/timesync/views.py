@@ -8,7 +8,7 @@ import json
 
 def time_submission(request):
     ts = pymesync.TimeSync('http://timesync-staging.osuosl.org/v1')
-    resp = ts.authenticate("test", "test", "password")
+    ts.authenticate("test", "test", "password")
 
     #Get list of projects
     projects = ts.get_projects()
@@ -31,40 +31,24 @@ def time_submission(request):
                 'date_worked': form.cleaned_data['date_worked'],
             }
 
-
             #Have to submit a slug
             for project in projects:
                 if project['name'] == params['project']:
                     params['project'] = project['slugs'][0]
 
-            #Make date json serializable
-            params['date_worked'] = params['date_worked'].strftime('%Y-%m-%d')
- 
             #Deal with multiple activities
             params['activities'] = params['activities'].split(',')
             params['activities'] = [activity.strip() for activity in
                 params['activities']]
             
-            resp = HttpResponse()
             resp = ts.create_time(params)
+            resp = resp[0]
+
+            #Make prettier
+            for key, value in resp.iteritems():
+                resp[key.replace('_', ' ').title()] = resp.pop(key)
  
-            #Return the response so that it can be printed nicely
-            if 'error' in resp[0]:
-                return render(request, 'timesync/time_submission_form.html',
-                        {'form': form, 'has_error': True, 'status': 
-                        resp[0]['status'], 'error': resp[0]['error'], 'text': 
-                        resp[0]['text']})
-            else:
-                return render(request, 'timesync/time_submission_form.html',
-                        {'form': form, 'has_error': False, 'duration': 
-                        resp[0]['duration'], 'project': resp[0]['project'],
-                        'user': resp[0]['user'], 'activities':
-                        resp[0]['activities'], 'notes': resp[0]['notes'],
-                        'issue_uri': resp[0]['issue_uri'], 'date_worked':
-                        resp[0]['date_worked']})
-
-
-
+            #Return the response
             return render(request, 'timesync/time_submission_form.html',
                     {'form': form, 'time': resp})
     else:
