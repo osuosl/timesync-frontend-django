@@ -1,14 +1,15 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
-from timesync.forms import TimeSubmissionForm
+from timesync.forms import TimeSubmissionForm, LoginForm
 from timesync.pymesync import pymesync
+from django.core.urlresolvers import reverse
 
 import json
 
 def time_submission(request):
-    ts = pymesync.TimeSync('http://timesync-staging.osuosl.org/v1')
-    ts.authenticate("test", "test", "password")
+    ts = pymesync.TimeSync('http://timesync-staging.osuosl.org/v1',
+            token=request.session['ts'])
 
     #Get list of projects
     projects = ts.get_projects()
@@ -30,7 +31,7 @@ def time_submission(request):
                 'issue_uri': form.cleaned_data['issue_uri'],
                 'date_worked': form.cleaned_data['date_worked'],
             }
-
+ 
             #Have to submit a slug
             for project in projects:
                 if project['name'] == params['project']:
@@ -51,11 +52,24 @@ def time_submission(request):
             #Return the response
             return render(request, 'timesync/time_submission_form.html',
                     {'form': form, 'time': resp})
+
     else:
         form = TimeSubmissionForm(project_names)
 
     return render(request, 'timesync/time_submission_form.html', {'form': form,
-            'time': ''})
+        'time': ''})
 
-def submitted(request):
-    return render(request, 'timesync/submitted.html', {'time': time})
+def login(request):
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+
+        if form.is_valid():
+            ts = pymesync.TimeSync('http://timesync-staging.osuosl.org/v1')
+            ts.authenticate(form.cleaned_data['username'],
+                form.cleaned_data['password'], "password")
+
+            request.session['ts'] = ts.token
+            return redirect(time_submission)
+    else:
+        form = LoginForm()
+    return render(request, 'timesync/login.html', {'form': form})
