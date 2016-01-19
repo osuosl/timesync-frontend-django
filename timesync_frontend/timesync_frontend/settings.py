@@ -99,3 +99,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# Encrypted cookies module
+SESSION_ENGINE = 'encrypted_cookies'
+
+ENCRYPTED_COOKIE_KEYS = ['MXmNMBkoFwsYX69dhd_LDGSg8ERbgfyRSeRmBadXB_M=']

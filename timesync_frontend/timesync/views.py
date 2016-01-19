@@ -13,6 +13,8 @@ def time_submission(request):
 
     #Get list of projects
     projects = ts.get_projects()
+    if 'error' in projects:
+        return redirect(login)
     project_names = []
 
     for project in projects:
@@ -51,7 +53,7 @@ def time_submission(request):
  
             #Return the response
             return render(request, 'timesync/time_submission_form.html',
-                    {'form': form, 'time': resp})
+                {'form': form, 'time': resp})
 
     else:
         form = TimeSubmissionForm(project_names)
