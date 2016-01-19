@@ -13,7 +13,7 @@ def time_submission(request):
 
     #Get list of projects
     projects = ts.get_projects()
-    if 'error' in projects:
+    if 'error' in projects[0]:
         return redirect(login)
     project_names = []
 
