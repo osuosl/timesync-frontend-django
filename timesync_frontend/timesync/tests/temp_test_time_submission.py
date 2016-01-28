@@ -20,7 +20,7 @@ class TimeSubmissionTestCase(TestCase):
         self.ts.user = "test"
         self.ts.password = "test"
         self.auth_type = "password"
-        self.ts.token = "TESTTOEKN"
+        self.ts.token = "TESTTOKEN"
 
     def tearDown(self):
         del(self.ts)
@@ -46,8 +46,7 @@ class TimeSubmissionTestCase(TestCase):
     def test_successful_time_creation(self):
         new_time = {'duration': '5', 'user': 'test', 'project': 'pymesync',
                     'activities': 'code', 'notes': 'note', 'issue_uri':
-                    'http://www.github.com',
-                    'date_worked': '2015-05-20'}
+                    'http://www.github.com', 'date_worked': '2015-05-20'}
 
         self.ts._create_or_update = mock.Mock(self.ts._create_or_update)
 

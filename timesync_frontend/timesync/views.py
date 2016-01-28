@@ -8,6 +8,7 @@ from django.core.urlresolvers import reverse
 import json
 
 def time_submission(request):
+    print request.session
     ts = pymesync.TimeSync('http://timesync-staging.osuosl.org/v1',
             token=request.session['ts'])
 
