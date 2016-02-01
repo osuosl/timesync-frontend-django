@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
-from timesync.forms import TimeSubmissionForm, LoginForm
+from timesync.forms import TimeSubmissionForm, LoginForm, TimeSelectionForm
 from timesync.pymesync import pymesync
 from django.core.urlresolvers import reverse
 
@@ -75,3 +75,41 @@ def login(request):
     else:
         form = LoginForm()
     return render(request, 'timesync/login.html', {'form': form})
+
+def get_times(request):
+    ts = pymesync.TimeSync('http://140.211.168.211/v1',
+                           password="password",
+                           user="example-user",
+                           auth_type="password")
+
+    if request.method == 'POST':
+        form = TimeSelectionForm(request.POST)
+        print form
+        if form.is_valid():
+            if form.cleaned_data['project']:
+                resp = ts.get_times(project=form.cleaned_data['project'])
+            elif form.cleaned_data['user']:
+                resp = ts.get_times(user=form.cleaned_data['user'])
+            elif form.cleaned_data['activities']:
+                resp = ts.get_times(activity=form.cleaned_data['activities'])
+            elif form.cleaned_data['issue_uri']:
+                resp = ts.get_times(issue_uri=form.cleaned_data['issue_uri'])
+            elif form.cleaned_data['issue_uri']:
+               resp = ts.get_times(issue_uri=form.cleaned_data['issue_uri'])
+            elif form.cleaned_data['issue_uri']:
+               resp = ts.get_times(issue_uri=form.cleaned_data['issue_uri'])
+            print resp
+
+            return render(request, 'timesync/get_times.html', {'times': resp})
+        else:
+            print form.is_valid()
+    else:
+        projects = ts.get_projects()
+        project_names = []
+
+        for project in projects:
+            project_names.append((project['name'], project['name']))
+
+        form = TimeSelectionForm(project_names)
+
+    return render(request, 'timesync/select_times.html', {'form': form})

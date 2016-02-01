@@ -1,0 +1,5 @@
+<form action="{% url 'get-times' %}" method="post">
+    {% csrf_token %}
+    <h1> It works! </h1>
+    {{ times.as_p }}
+</form>
