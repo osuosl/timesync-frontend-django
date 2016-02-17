@@ -1,5 +1,39 @@
-<form action="{% url 'get-times' %}" method="post">
+<form action="{% url 'select-times' %}" method="post">
     {% csrf_token %}
-    <h1> It works! </h1>
-    {{ times.as_p }}
+    {{ form.as_p }}
+    <input type="submit" value="Submit" />
 </form>
+
+{% for thing in times %}
+    <h3> TIME </h3>
+    <p> Created At: 
+    {{ thing.created_at }}</p>
+    <p> Deleted At:
+    {{ thing.deleted_at }}</p>
+    <p> Date Worked:
+    {{ thing.date_worked }}</p>
+    <p> UUID: 
+    {{ thing.uuid }}</p>
+    <p> Activities:
+    {% for activity in thing.activities %}
+        {{ activity }}
+    {% endfor %}</p>
+    <p> Notes: 
+    {{ thing.notes }}</p>
+    <p> Updated At: 
+    {{ thing.updated_at }}</p>
+    <p> Project:
+    {% for project in thing.project %}
+        {{ project }}
+    {% endfor %}</p>
+    <p> User:
+    {{ thing.user }}</p>
+    <p> Duration:
+    {{ thing.duration }}</p>
+    <p> Issue URI: 
+    {{ thing.issue_uri }}</p>
+    <p> ID:
+    {{ thing.id }}</p>
+    <p> Revision:
+    {{ thing.revision }}</p>
+{% endfor %}

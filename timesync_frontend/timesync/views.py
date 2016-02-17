@@ -8,13 +8,18 @@ from django.core.urlresolvers import reverse
 import json
 
 def time_submission(request):
-    print request.session
-    ts = pymesync.TimeSync('http://timesync-staging.osuosl.org/v1',
-            token=request.session['ts'])
+    #print request.session
+    if not 'ts' in request.session:
+        request.session['source'] = 'time-submission'
+        return redirect(login)
+    else:
+        ts = pymesync.TimeSync('http://timesync-staging.osuosl.org/v1',
+                token=request.session['ts'])
 
     #Get list of projects
     projects = ts.get_projects()
     if 'error' in projects[0]:
+        request.session['source'] = 'time-submission'
         return redirect(login)
     project_names = []
 
@@ -25,6 +30,9 @@ def time_submission(request):
         form = TimeSubmissionForm(projects=project_names, data=request.POST)
         
         if form.is_valid():
+            for item in form.cleaned_data:
+                params[item] = form.cleaned_data[item]
+
             params = {
                 'duration': form.cleaned_data['duration'],
                 'user': form.cleaned_data['user'],
@@ -62,6 +70,7 @@ def time_submission(request):
         'time': ''})
 
 def login(request):
+    #print request.path
     if request.method == 'POST':
         form = LoginForm(request.POST)
 
@@ -71,45 +80,58 @@ def login(request):
                 form.cleaned_data['password'], "password")
 
             request.session['ts'] = ts.token
-            return redirect(time_submission)
+            return redirect(request.session['source'])
     else:
         form = LoginForm()
     return render(request, 'timesync/login.html', {'form': form})
 
 def get_times(request):
-    ts = pymesync.TimeSync('http://140.211.168.211/v1',
-                           password="password",
-                           user="example-user",
-                           auth_type="password")
+    if not 'ts' in request.session:
+        request.session['source'] = 'select-times'
+        return redirect(login)
+    else:
+        ts = pymesync.TimeSync('http://timesync-staging.osuosl.org/v1',
+                token=request.session['ts'])
+
+    projects = ts.get_projects()
+    if 'error' in projects[0]:
+        request.session['source'] = 'select-times'
+        return redirect(login)
+    project_names = []
+
+    for project in projects:
+        project_names.append((project['name'], project['name']))
 
     if request.method == 'POST':
-        form = TimeSelectionForm(request.POST)
-        print form
+        form = TimeSelectionForm(projects=project_names, data=request.POST)
         if form.is_valid():
-            if form.cleaned_data['project']:
-                resp = ts.get_times(project=form.cleaned_data['project'])
-            elif form.cleaned_data['user']:
-                resp = ts.get_times(user=form.cleaned_data['user'])
-            elif form.cleaned_data['activities']:
-                resp = ts.get_times(activity=form.cleaned_data['activities'])
-            elif form.cleaned_data['issue_uri']:
-                resp = ts.get_times(issue_uri=form.cleaned_data['issue_uri'])
-            elif form.cleaned_data['issue_uri']:
-               resp = ts.get_times(issue_uri=form.cleaned_data['issue_uri'])
-            elif form.cleaned_data['issue_uri']:
-               resp = ts.get_times(issue_uri=form.cleaned_data['issue_uri'])
-            print resp
+            params = dict()
 
-            return render(request, 'timesync/get_times.html', {'times': resp})
-        else:
-            print form.is_valid()
+            for item in form.cleaned_data:
+                if form.cleaned_data[item]:
+                    params[item] = form.cleaned_data[item]
+ 
+            #Have to submit a slug
+            if 'project' in params:
+                for project in projects:
+                    if project['name'] == params['project']:
+                        params['project'] = [project['slugs'][0]]
+
+            #Deal with multiple activities
+            if 'activity' in params:
+                params['activity'] = params['activity'].split(',')
+                params['activity'] = [activity.strip() for activity in
+                    params['activity']]
+
+            if 'user' in params:
+                params['user'] = params['user'].split(',')
+                params['user'] = [activity.strip() for activity in
+                    params['user']]
+
+            resp = ts.get_times(params)
+            return render(request, 'timesync/get_times.html', {'form': form, 
+                'times': resp})
     else:
-        projects = ts.get_projects()
-        project_names = []
-
-        for project in projects:
-            project_names.append((project['name'], project['name']))
-
         form = TimeSelectionForm(project_names)
 
-    return render(request, 'timesync/select_times.html', {'form': form})
+    return render(request, 'timesync/get_times.html', {'form': form})
