@@ -1,19 +1,20 @@
-<<<<<<< HEAD
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from timesync.forms import TimeSubmissionForm, LoginForm
 from django.core.urlresolvers import reverse
-=======
-from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect
-from django.template import loader
-from timesync.forms import TimeSubmissionForm
 
 import pymesync
 import json
 
 def time_submission(request):
+    if not 'ts' in request.session:
+        request.session['source'] = 'time-submission'
+        return redirect(login)
+    else:
+        ts = pymesync.TimeSync('http://timesync-staging.osuosl.org/v1',
+                token=request.session['ts'])
+
     #Get list of projects
     projects = ts.get_projects()
     if 'error' in projects[0]:
