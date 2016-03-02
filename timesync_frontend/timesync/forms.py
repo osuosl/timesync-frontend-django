@@ -19,3 +19,16 @@ class TimeSubmissionForm(forms.Form):
 class LoginForm(forms.Form):
     username = forms.CharField(label='Username')
     password = forms.CharField(label='Password', widget=forms.PasswordInput())
+
+class TimeSelectionForm(forms.Form):
+    def __init__(self, projects, *args, **kwargs):
+        super(TimeSelectionForm, self).__init__(*args, **kwargs)
+        self.fields['project'] = forms.ChoiceField(choices=projects,
+                required=False)
+
+    user = forms.CharField(label='User', required=False)
+    activity = forms.CharField(label='Activity', required=False)
+    start = forms.CharField(label='Start', required=False)
+    end = forms.CharField(label='End', required=False)
+    include_revisions = forms.CharField(label='Revisions', required=False)
+    include_deleted = forms.CharField(label='Deleted', required=False)

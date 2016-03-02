@@ -1,1 +1,3 @@
-django-encrypted-cookie-session==3.0.1
+Django==1.8.4
+django-encrypted-cookie-session==3.0.0
+pymesync==0.0.1

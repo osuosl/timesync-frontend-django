@@ -5,6 +5,10 @@
 </form>
 
 {% for thing,result in time.iteritems %}
-    {{ thing }}
-    {{ result }}
+    {% if thing == "Uuid" %}
+
+    {% else %}
+        <p>{{ thing }}</p>
+        {{ result }}
+    {% endif %}
 {% endfor %}
