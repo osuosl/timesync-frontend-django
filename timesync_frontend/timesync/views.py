@@ -2,8 +2,8 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from timesync.forms import TimeSubmissionForm
-from timesync.pymesync import pymesync
 
+import pymesync
 import json
 
 def time_submission(request):
