@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from timesync.forms import TimeSubmissionForm, LoginForm, TimeSelectionForm
-from timesync.pymesync import pymesync
+import pymesync
 from django.core.urlresolvers import reverse
 
 import json
@@ -28,7 +28,7 @@ def time_submission(request):
 
     if request.method == 'POST':
         form = TimeSubmissionForm(projects=project_names, data=request.POST)
-        
+
         if form.is_valid():
             for item in form.cleaned_data:
                 params[item] = form.cleaned_data[item]
@@ -42,7 +42,7 @@ def time_submission(request):
                 'issue_uri': form.cleaned_data['issue_uri'],
                 'date_worked': form.cleaned_data['date_worked'],
             }
- 
+
             #Have to submit a slug
             for project in projects:
                 if project['name'] == params['project']:
@@ -52,14 +52,14 @@ def time_submission(request):
             params['activities'] = params['activities'].split(',')
             params['activities'] = [activity.strip() for activity in
                 params['activities']]
-            
+
             resp = ts.create_time(params)
             resp = resp[0]
 
             #Make prettier
             for key, value in resp.iteritems():
                 resp[key.replace('_', ' ').title()] = resp.pop(key)
- 
+
             #Return the response
             return render(request, 'timesync/time_submission_form.html',
                 {'form': form, 'time': resp})
@@ -110,7 +110,7 @@ def get_times(request):
             for item in form.cleaned_data:
                 if form.cleaned_data[item]:
                     params[item] = form.cleaned_data[item]
- 
+
             #Have to submit a slug
             if 'project' in params:
                 for project in projects:
@@ -129,7 +129,7 @@ def get_times(request):
                     params['user']]
 
             resp = ts.get_times(params)
-            return render(request, 'timesync/get_times.html', {'form': form, 
+            return render(request, 'timesync/get_times.html', {'form': form,
                 'times': resp})
     else:
         form = TimeSelectionForm(project_names)
