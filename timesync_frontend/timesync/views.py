@@ -7,9 +7,9 @@ from django.core.urlresolvers import reverse
 import pymesync
 import json
 
-def time_submission(request):
+def submit_times(request):
     if not 'ts' in request.session:
-        request.session['source'] = 'time-submission'
+        request.session['source'] = 'submit-times'
         return redirect(login)
     else:
         ts = pymesync.TimeSync('http://timesync-staging.osuosl.org/v1',
@@ -29,18 +29,10 @@ def time_submission(request):
         form = TimeSubmissionForm(projects=project_names, data=request.POST)
 
         if form.is_valid():
+            params = dict()
+
             for item in form.cleaned_data:
                 params[item] = form.cleaned_data[item]
-
-            params = {
-                'duration': form.cleaned_data['duration'],
-                'user': form.cleaned_data['user'],
-                'project': form.cleaned_data['project'],
-                'activities': form.cleaned_data['activities'],
-                'notes': form.cleaned_data['notes'],
-                'issue_uri': form.cleaned_data['issue_uri'],
-                'date_worked': form.cleaned_data['date_worked'],
-            }
 
             #Have to submit a slug
             for project in projects:
@@ -60,12 +52,12 @@ def time_submission(request):
                 resp[key.replace('_', ' ').title()] = resp.pop(key)
 
             #Return the response
-            return render(request, 'timesync/time_submission_form.html',
+            return render(request, 'timesync/submit_times.html',
                 {'form': form, 'time': resp})
     else:
         form = TimeSubmissionForm(project_names)
 
-    return render(request, 'timesync/time_submission_form.html', {'form': form,
+    return render(request, 'timesync/submit_times.html', {'form': form,
         'time': ''})
 
 def login(request):
@@ -84,9 +76,9 @@ def login(request):
         form = LoginForm()
     return render(request, 'timesync/login.html', {'form': form})
 
-def get_times(request):
+def view_times(request):
     if not 'ts' in request.session:
-        request.session['source'] = 'select-times'
+        request.session['source'] = 'view-times'
         return redirect(login)
     else:
         ts = pymesync.TimeSync('http://timesync-staging.osuosl.org/v1',
@@ -128,9 +120,9 @@ def get_times(request):
                     params['user']]
 
             resp = ts.get_times(params)
-            return render(request, 'timesync/get_times.html', {'form': form,
+            return render(request, 'timesync/view_times.html', {'form': form,
                 'times': resp})
     else:
         form = TimeSelectionForm(project_names)
 
-    return render(request, 'timesync/get_times.html', {'form': form})
+    return render(request, 'timesync/view_times.html', {'form': form})

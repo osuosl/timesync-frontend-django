@@ -1,0 +1,17 @@
+<form action="{% url 'submit-times' %}" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Submit" />
+</form>
+
+{% for thing,result in time.iteritems %}
+    {% if thing == "Activities" %}
+        <p>{{ thing }}:
+        {% for activity in result %}
+            {{ activity }}
+        {% endfor %}</p>
+    {% else %}
+        <p>{{ thing }}:
+        {{ result }}</p>
+    {% endif %}
+{% endfor %}

@@ -30,5 +30,5 @@ class TimeSelectionForm(forms.Form):
     activity = forms.CharField(label='Activity', required=False)
     start = forms.CharField(label='Start', required=False)
     end = forms.CharField(label='End', required=False)
-    include_revisions = forms.CharField(label='Revisions', required=False)
-    include_deleted = forms.CharField(label='Deleted', required=False)
+    include_revisions = forms.BooleanField(label='Revisions', required=False)
+    include_deleted = forms.BooleanField(label='Deleted', required=False)

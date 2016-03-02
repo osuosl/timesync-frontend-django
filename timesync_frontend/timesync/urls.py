@@ -3,8 +3,7 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
-    url(r'^time-submission', views.time_submission, name='time-submission'),
+    url(r'^submit-times', views.submit_times, name='submit-times'),
     url(r'^login', views.login, name='login'),
-    url(r'^get-times', views.get_times, name='get-times'),
-    url(r'^select-times', views.get_times, name='select-times'),
+    url(r'^view-times', views.view_times, name='view-times'),
 ]
