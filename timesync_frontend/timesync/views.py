@@ -1,17 +1,19 @@
+<<<<<<< HEAD
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from timesync.forms import TimeSubmissionForm, LoginForm
 from django.core.urlresolvers import reverse
+=======
+from django.shortcuts import render
+from django.http import HttpResponse, HttpResponseRedirect
+from django.template import loader
+from timesync.forms import TimeSubmissionForm
 
 import pymesync
 import json
 
 def time_submission(request):
-    print request.session
-    ts = pymesync.TimeSync('http://timesync-staging.osuosl.org/v1',
-            token=request.session['ts'])
-
     #Get list of projects
     projects = ts.get_projects()
     if 'error' in projects[0]:
@@ -34,7 +36,7 @@ def time_submission(request):
                 'issue_uri': form.cleaned_data['issue_uri'],
                 'date_worked': form.cleaned_data['date_worked'],
             }
- 
+
             #Have to submit a slug
             for project in projects:
                 if project['name'] == params['project']:
